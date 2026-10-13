@@ -16,7 +16,8 @@ public partial class CountriesPage : Page
 
     private void Country_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement element && element.DataContext is RadioCountry country)
+        // ItemsRepeater templates get no DataContext — the item rides in Tag.
+        if (sender is FrameworkElement { Tag: RadioCountry country })
         {
             Frame.Navigate(typeof(StationsPage), new StationsPageArgs(
                 country.Name,

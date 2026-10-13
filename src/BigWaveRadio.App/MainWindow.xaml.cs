@@ -35,9 +35,9 @@ public partial class MainWindow : Window
             // Icon is cosmetic — never block startup on it.
         }
 
-        // The MediaPlayerElement only exists to host the shared MediaPlayer
-        // that PlayerViewModel drives.
-        HiddenPlayer.SetMediaPlayer(PlayerViewModel.Instance.Player);
+        // The MediaPlayer is used standalone (audio-only) — attaching it to a
+        // 0-size collapsed MediaPlayerElement tears down its video bridge and
+        // silently stops playback.
 
         // Select the default page AFTER the tree is built. Setting
         // IsSelected in XAML would fire SelectionChanged mid-parse, before

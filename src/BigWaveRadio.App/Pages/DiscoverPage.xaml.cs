@@ -24,7 +24,7 @@ public partial class DiscoverPage : Page
 
     private void Tag_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement element && element.DataContext is RadioTag tag)
+        if (sender is FrameworkElement { Tag: RadioTag tag })
         {
             Frame.Navigate(typeof(StationsPage), new StationsPageArgs(
                 $"#{tag.Name}",

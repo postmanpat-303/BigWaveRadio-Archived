@@ -56,7 +56,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="models:RadioTag">
-                        <Button Click="Tag_Click" ToolTipService.ToolTip="{x:Bind StationCount}">
+                        <Button Click="Tag_Click" Tag="{x:Bind}" ToolTipService.ToolTip="{x:Bind StationCount}">
                             <Button.Content>
                                 <TextBlock>
                                     <Run Text="#" /><Run Text="{x:Bind Name}" />

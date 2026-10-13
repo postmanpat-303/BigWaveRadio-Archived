@@ -175,6 +175,7 @@ public partial class PlayerViewModel : ObservableObject
     private void OnMediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
     {
         IsPlaying = false;
-        Status = $"Playback error: {args.ErrorMessage}";
+        var detail = args.ExtendedErrorCode is { } ex ? $" ({ex.HResult:X8}: {ex.Message})" : "";
+        Status = $"Playback error: {args.Error} {args.ErrorMessage}{detail}".Trim();
     }
 }

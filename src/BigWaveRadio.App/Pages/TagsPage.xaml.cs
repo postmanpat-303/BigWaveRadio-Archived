@@ -16,7 +16,8 @@ public partial class TagsPage : Page
 
     private void Tag_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement element && element.DataContext is RadioTag tag)
+        // ItemsRepeater templates get no DataContext — the item rides in Tag.
+        if (sender is FrameworkElement { Tag: RadioTag tag })
         {
             Frame.Navigate(typeof(StationsPage), new StationsPageArgs(
                 $"#{tag.Name}",

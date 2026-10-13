@@ -30,6 +30,7 @@
                     <DataTemplate x:DataType="models:RadioTag">
                         <Button
                             Click="Tag_Click"
+                            Tag="{x:Bind}"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch"
                             Padding="12,8"

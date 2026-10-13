@@ -76,13 +76,15 @@ public sealed partial class StationGridView : UserControl
 
     private void Card_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement element && element.DataContext is StationItem item)
+        // ItemsRepeater does not set DataContext on data-template roots,
+        // so the StationItem is carried in Tag instead.
+        if (sender is FrameworkElement { Tag: StationItem item })
             PlayRequested?.Invoke(this, item);
     }
 
     private void Star_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement element && element.DataContext is StationItem item)
+        if (sender is FrameworkElement { Tag: StationItem item })
             item.ToggleLibrary();
     }
 }

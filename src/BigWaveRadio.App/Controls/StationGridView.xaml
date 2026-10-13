@@ -19,7 +19,9 @@
                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                 BorderThickness="1"
-                ToolTipService.ToolTip="{x:Bind Station.Name}">
+                ToolTipService.ToolTip="{x:Bind Station.Name}"
+                AutomationProperties.Name="{x:Bind Station.Name}"
+                Tag="{x:Bind}">
                 <Grid Height="92" Margin="12,8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />

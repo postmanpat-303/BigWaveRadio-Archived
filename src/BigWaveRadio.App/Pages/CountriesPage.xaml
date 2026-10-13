@@ -30,6 +30,7 @@
                     <DataTemplate x:DataType="models:RadioCountry">
                         <Button
                             Click="Country_Click"
+                            Tag="{x:Bind}"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch"
                             Padding="12,8"
