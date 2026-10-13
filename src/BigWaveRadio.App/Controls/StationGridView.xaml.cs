@@ -1,8 +1,13 @@
 using System.Collections;
+using BigWaveRadio.App.Services;
 using BigWaveRadio.App.ViewModels;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Windows.Foundation;
+using Windows.UI;
 
 namespace BigWaveRadio.App.Controls;
 
@@ -12,6 +17,23 @@ namespace BigWaveRadio.App.Controls;
 /// </summary>
 public sealed partial class StationGridView : UserControl
 {
+    /// <summary>Shared hover tint used when a custom accent colour is active (~15% opacity).</summary>
+    private static readonly SolidColorBrush AccentHoverBrush = new(Colors.Transparent);
+
+    static StationGridView()
+    {
+        // One subscription for every card: recolour the shared tint live.
+        ThemeService.AccentChanged += (_, _) => UpdateAccentHoverBrush();
+        UpdateAccentHoverBrush();
+    }
+
+    private static void UpdateAccentHoverBrush()
+    {
+        var c = ThemeService.Settings.Accent == "system"
+            ? Colors.Transparent
+            : ThemeService.CurrentAccentColor;
+        AccentHoverBrush.Color = Color.FromArgb(0x26, c.R, c.G, c.B);
+    }
     public static readonly DependencyProperty ItemsProperty = DependencyProperty.Register(
         nameof(Items),
         typeof(IList),
@@ -86,5 +108,51 @@ public sealed partial class StationGridView : UserControl
     {
         if (sender is FrameworkElement { Tag: StationItem item })
             item.ToggleLibrary();
+    }
+
+    private void Card_PointerEntered(object sender, PointerRoutedEventArgs e)
+    {
+        if (sender is not DependencyObject root) return;
+        if (FindHoverFill(root) is not { } hover) return;
+
+        // Custom accent: tint with the chosen colour. "Match system": keep the
+        // theme-resource grey that was set in XAML (ClearValue restores it).
+        if (ThemeService.Settings.Accent == "system")
+            hover.ClearValue(Border.BackgroundProperty);
+        else
+            hover.Background = AccentHoverBrush;
+        hover.Opacity = 1;
+    }
+
+    private void Card_PointerExited(object sender, PointerRoutedEventArgs e)
+    {
+        if (sender is DependencyObject root && FindHoverFill(root) is { } hover)
+            hover.Opacity = 0;
+    }
+
+    private static Border? FindHoverFill(DependencyObject node)
+    {
+        var current = node;
+        while (current is not null)
+        {
+            if (SearchDown(current) is { } found)
+                return found;
+            current = VisualTreeHelper.GetParent(current);
+        }
+        return null;
+
+        static Border? SearchDown(DependencyObject n)
+        {
+            var count = VisualTreeHelper.GetChildrenCount(n);
+            for (var i = 0; i < count; i++)
+            {
+                var child = VisualTreeHelper.GetChild(n, i);
+                if (child is Border { Name: "HoverFill" } match)
+                    return match;
+                if (SearchDown(child) is { } found)
+                    return found;
+            }
+            return null;
+        }
     }
 }

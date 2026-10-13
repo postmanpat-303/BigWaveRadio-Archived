@@ -18,15 +18,31 @@
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                 BorderThickness="1"
                 CornerRadius="8"
-                ToolTipService.ToolTip="{x:Bind Station.Name}">
+                ToolTipService.ToolTip="{x:Bind Station.Name}"
+                PointerEntered="Card_PointerEntered"
+                PointerExited="Card_PointerExited">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
+                <Border
+                    x:Name="HoverFill"
+                    Grid.ColumnSpan="2"
+                    CornerRadius="7"
+                    IsHitTestVisible="False"
+                    Background="{ThemeResource ControlFillColorTertiaryBrush}"
+                    Opacity="0">
+                    <Border.OpacityTransition>
+                        <ScalarTransition Duration="0:0:0.12" />
+                    </Border.OpacityTransition>
+                </Border>
+
                 <Button
                     Grid.Column="0"
                     Click="Card_Click"
+                    PointerEntered="Card_PointerEntered"
+                    PointerExited="Card_PointerExited"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
                     Padding="0"

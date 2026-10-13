@@ -165,6 +165,21 @@ public static class ThemeService
         Settings.Accent = key;
         Save();
         ApplyAccent();
+        RefreshThemeResources();
+    }
+
+    /// <summary>
+    /// Nudge every ThemeResource in the tree to re-resolve. Dictionary changes
+    /// invalidate most lookups, but some controls (e.g. Slider) keep painting the
+    /// previous accent brush until the effective theme changes; a quick toggle
+    /// forces a full re-evaluation on the next frame.
+    /// </summary>
+    private static void RefreshThemeResources()
+    {
+        if (_root is null) return;
+        var current = _root.RequestedTheme;
+        _root.RequestedTheme = current == ElementTheme.Dark ? ElementTheme.Light : ElementTheme.Dark;
+        _root.RequestedTheme = current;
     }
 
     private static ElementTheme ResolveTheme() => Settings.Theme switch
