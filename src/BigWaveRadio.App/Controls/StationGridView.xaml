@@ -10,67 +10,82 @@
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
 
         <DataTemplate x:Key="StationCardTemplate" x:DataType="vm:StationItem">
-            <Button
-                Click="Card_Click"
+            <!-- The star is a sibling of the play area, not nested inside the
+                 card Button, so its clicks are never swallowed by the parent. -->
+            <Grid
                 HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Stretch"
-                Padding="0"
-                CornerRadius="8"
                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                 BorderThickness="1"
-                ToolTipService.ToolTip="{x:Bind Station.Name}"
-                AutomationProperties.Name="{x:Bind Station.Name}"
-                Tag="{x:Bind}">
-                <Grid Height="92" Margin="12,8">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+                CornerRadius="8"
+                ToolTipService.ToolTip="{x:Bind Station.Name}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-                    <Grid
-                        Grid.Column="0"
-                        Width="44"
-                        Height="44"
-                        CornerRadius="22"
-                        VerticalAlignment="Center"
-                        Background="{ThemeResource AccentFillColorDefaultBrush}">
-                        <SymbolIcon Symbol="Play" Foreground="White" />
+                <Button
+                    Grid.Column="0"
+                    Click="Card_Click"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    Padding="0"
+                    CornerRadius="8"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    AutomationProperties.Name="{x:Bind Station.Name}"
+                    Tag="{x:Bind}">
+                    <Grid Height="92" Margin="12,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid
+                            Grid.Column="0"
+                            Width="44"
+                            Height="44"
+                            CornerRadius="22"
+                            VerticalAlignment="Center"
+                            Background="{ThemeResource AccentFillColorDefaultBrush}">
+                            <SymbolIcon Symbol="Play" Foreground="White" />
+                        </Grid>
+
+                        <StackPanel Grid.Column="1" Margin="12,0,8,0" VerticalAlignment="Center">
+                            <TextBlock
+                                Text="{x:Bind Station.Name}"
+                                FontWeight="SemiBold"
+                                TextTrimming="CharacterEllipsis"
+                                MaxLines="1" />
+                            <TextBlock
+                                Text="{x:Bind Station.MetaLine}"
+                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                Opacity="0.7"
+                                TextTrimming="CharacterEllipsis"
+                                MaxLines="1" />
+                            <TextBlock
+                                Text="{x:Bind Station.QualityLine}"
+                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                Opacity="0.7"
+                                TextTrimming="CharacterEllipsis"
+                                MaxLines="1" />
+                        </StackPanel>
                     </Grid>
+                </Button>
 
-                    <StackPanel Grid.Column="1" Margin="12,0,8,0" VerticalAlignment="Center">
-                        <TextBlock
-                            Text="{x:Bind Station.Name}"
-                            FontWeight="SemiBold"
-                            TextTrimming="CharacterEllipsis"
-                            MaxLines="1" />
-                        <TextBlock
-                            Text="{x:Bind Station.MetaLine}"
-                            Style="{ThemeResource CaptionTextBlockStyle}"
-                            Opacity="0.7"
-                            TextTrimming="CharacterEllipsis"
-                            MaxLines="1" />
-                        <TextBlock
-                            Text="{x:Bind Station.QualityLine}"
-                            Style="{ThemeResource CaptionTextBlockStyle}"
-                            Opacity="0.7"
-                            TextTrimming="CharacterEllipsis"
-                            MaxLines="1" />
-                    </StackPanel>
-
-                    <ToggleButton
-                        Grid.Column="2"
-                        IsChecked="{x:Bind IsInLibrary, Mode=OneWay}"
-                        Click="Star_Click"
-                        VerticalAlignment="Center"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        ToolTipService.ToolTip="Save to My Library">
-                        <SymbolIcon Symbol="Favorite" />
-                    </ToggleButton>
-                </Grid>
-            </Button>
+                <ToggleButton
+                    Grid.Column="1"
+                    Tag="{x:Bind}"
+                    IsChecked="{x:Bind IsInLibrary, Mode=OneWay}"
+                    Click="Star_Click"
+                    VerticalAlignment="Center"
+                    Margin="0,0,8,0"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    ToolTipService.ToolTip="Save to My Library">
+                    <SymbolIcon Symbol="Favorite" />
+                </ToggleButton>
+            </Grid>
         </DataTemplate>
     </UserControl.Resources>
 
