@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Window
+    x:Class="BigWaveRadio.App.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:BigWaveRadio.App.Controls"
+    xmlns:pages="using:BigWaveRadio.App.Pages"
+    Title="BigWave Radio">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Custom title bar (extends into the window chrome) -->
+        <Grid x:Name="AppTitleBar" Height="48" VerticalAlignment="Top">
+            <StackPanel Orientation="Horizontal" Spacing="10" Margin="16,0,0,0" VerticalAlignment="Center">
+                <Image Source="Assets/bigwave-32.png" Width="18" Height="18" VerticalAlignment="Center" />
+                <TextBlock Text="BigWave Radio" VerticalAlignment="Center"
+                           Style="{ThemeResource CaptionTextBlockStyle}" FontWeight="SemiBold" />
+            </StackPanel>
+        </Grid>
+
+        <NavigationView
+            x:Name="NavView"
+            Grid.Row="1"
+            PaneDisplayMode="Auto"
+            OpenPaneLength="264"
+            IsBackEnabled="True"
+            BackRequested="NavView_BackRequested"
+            SelectionChanged="NavView_SelectionChanged">
+
+            <NavigationView.MenuItems>
+                <NavigationViewItem x:Name="DiscoverItem" Content="Discover" Tag="discover" Icon="Home" />
+                <NavigationViewItem Content="Search" Tag="search" Icon="Find" />
+                <NavigationViewItem Content="My Library" Tag="library" Icon="Favorite" />
+                <NavigationViewItemSeparator />
+                <NavigationViewItem Content="Tags" Tag="tags" Icon="List" />
+                <NavigationViewItem Content="Countries" Tag="countries" Icon="Map" />
+            </NavigationView.MenuItems>
+
+            <Frame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" />
+        </NavigationView>
+
+        <!-- Now-playing bar pinned to the bottom -->
+        <controls:NowPlayingBar Grid.Row="2" />
+
+        <!-- Audio-only playback surface -->
+        <MediaPlayerElement
+            x:Name="HiddenPlayer"
+            Visibility="Collapsed"
+            Width="0"
+            Height="0"
+            AreTransportControlsEnabled="False" />
+    </Grid>
+</Window>

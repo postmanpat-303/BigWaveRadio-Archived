@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="BigWaveRadio.App.Pages.LibraryPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:BigWaveRadio.App.Controls">
+
+    <Grid Margin="28,20,28,12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,12">
+            <TextBlock Text="My Library" Style="{ThemeResource TitleTextBlockStyle}" />
+            <TextBlock
+                Text="Stations you saved for quick access — stored locally on this PC only"
+                Style="{ThemeResource CaptionTextBlockStyle}"
+                Opacity="0.7" />
+        </StackPanel>
+
+        <controls:StationGridView
+            Grid.Row="1"
+            Items="{x:Bind VM.Stations, Mode=OneWay}"
+            EmptyText="Nothing saved yet. Tap the star on any station to keep it here for quick access."
+            PlayRequested="StationGrid_PlayRequested" />
+    </Grid>
+</Page>

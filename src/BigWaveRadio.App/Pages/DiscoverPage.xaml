@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="BigWaveRadio.App.Pages.DiscoverPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:BigWaveRadio.App.Controls"
+    xmlns:models="using:BigWaveRadio.Core.Models">
+
+    <Grid Margin="28,20,28,12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,4">
+            <TextBlock Text="Discover" Style="{ThemeResource TitleTextBlockStyle}" />
+            <TextBlock
+                Text="Live radio from the community-powered radio-browser.info directory"
+                Style="{ThemeResource CaptionTextBlockStyle}"
+                Opacity="0.7" />
+        </StackPanel>
+
+        <RadioButtons
+            Grid.Row="1"
+            x:Name="ModeSelector"
+            MaxColumns="3"
+            Margin="0,8,0,12"
+            SelectedItem="{x:Bind VM.SelectedMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+        <controls:StationGridView
+            Grid.Row="2"
+            Items="{x:Bind VM.Stations, Mode=OneWay}"
+            IsLoading="{x:Bind VM.IsLoading, Mode=OneWay}"
+            EmptyText="Could not reach the radio directory. Check your connection and try again."
+            PlayRequested="StationGrid_PlayRequested" />
+
+        <TextBlock
+            Grid.Row="3"
+            Text="Explore by tag"
+            Style="{ThemeResource SubtitleTextBlockStyle}"
+            Margin="0,16,0,8" />
+
+        <ScrollViewer
+            Grid.Row="4"
+            HorizontalScrollBarVisibility="Auto"
+            VerticalScrollBarVisibility="Disabled"
+            HorizontalAlignment="Left">
+            <ItemsControl ItemsSource="{x:Bind VM.TopTags, Mode=OneWay}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="8" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="models:RadioTag">
+                        <Button Click="Tag_Click" ToolTipService.ToolTip="{x:Bind StationCount}">
+                            <Button.Content>
+                                <TextBlock>
+                                    <Run Text="#" /><Run Text="{x:Bind Name}" />
+                                </TextBlock>
+                            </Button.Content>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</Page>

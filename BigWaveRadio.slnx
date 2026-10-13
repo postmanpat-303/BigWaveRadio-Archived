@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/BigWaveRadio.App/BigWaveRadio.App.csproj" />
+    <Project Path="src/BigWaveRadio.Core/BigWaveRadio.Core.csproj" />
+  </Folder>
+</Solution>

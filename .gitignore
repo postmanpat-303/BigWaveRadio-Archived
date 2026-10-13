@@ -1,0 +1,23 @@
+# Build output
+bin/
+obj/
+out/
+artifacts/
+
+# User-specific files
+*.user
+*.suo
+.vs/
+.vscode/
+*.csproj.user
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Rider / VS
+.idea/
+*.DotSettings.user
+
+# Local build helper (works around a stripped shell environment)
+restore.cmd

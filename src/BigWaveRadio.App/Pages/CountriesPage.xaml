@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="BigWaveRadio.App.Pages.CountriesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:models="using:BigWaveRadio.Core.Models">
+
+    <Grid Margin="28,20,28,12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock
+            Grid.Row="0"
+            Text="Browse by country"
+            Style="{ThemeResource TitleTextBlockStyle}"
+            Margin="0,0,0,12" />
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ItemsRepeater ItemsSource="{x:Bind VM.Countries, Mode=OneWay}">
+                <ItemsRepeater.Layout>
+                    <UniformGridLayout
+                        MinItemWidth="220"
+                        MinItemHeight="64"
+                        ItemsStretch="Fill"
+                        ItemsJustification="Start" />
+                </ItemsRepeater.Layout>
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="models:RadioCountry">
+                        <Button
+                            Click="Country_Click"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            Padding="12,8"
+                            CornerRadius="8"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1">
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock
+                                    Text="{x:Bind Name}"
+                                    FontWeight="SemiBold"
+                                    TextTrimming="CharacterEllipsis"
+                                    MaxLines="1" />
+                                <TextBlock
+                                    Text="{x:Bind StationCount}"
+                                    Style="{ThemeResource CaptionTextBlockStyle}"
+                                    Opacity="0.7" />
+                            </StackPanel>
+                        </Button>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </ScrollViewer>
+
+        <ProgressRing
+            Grid.Row="1"
+            IsActive="{x:Bind VM.IsLoading, Mode=OneWay}"
+            Width="40"
+            Height="40"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center" />
+    </Grid>
+</Page>

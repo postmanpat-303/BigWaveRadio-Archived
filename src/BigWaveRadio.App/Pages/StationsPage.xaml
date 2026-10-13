@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="BigWaveRadio.App.Pages.StationsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:BigWaveRadio.App.Controls">
+
+    <Grid Margin="28,20,28,12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock
+            Grid.Row="0"
+            x:Name="TitleText"
+            Style="{ThemeResource TitleTextBlockStyle}"
+            TextTrimming="CharacterEllipsis"
+            Margin="0,0,0,12" />
+
+        <controls:StationGridView
+            Grid.Row="1"
+            Items="{x:Bind VM.Stations, Mode=OneWay}"
+            IsLoading="{x:Bind VM.IsLoading, Mode=OneWay}"
+            EmptyText="No stations found."
+            PlayRequested="StationGrid_PlayRequested" />
+    </Grid>
+</Page>
