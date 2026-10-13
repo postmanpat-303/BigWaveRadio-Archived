@@ -16,33 +16,66 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <AutoSuggestBox
-            x:Name="QueryBox"
-            Grid.Row="0"
-            PlaceholderText="Search stations by name…"
-            QueryIcon="Find"
-            QuerySubmitted="QueryBox_QuerySubmitted"
-            Width="400"
-            HorizontalAlignment="Left"
-            Margin="0,0,0,12" />
+        <Grid Grid.Row="0" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-        <TextBlock
+            <Button
+                Grid.Column="0"
+                x:Name="BackButton"
+                Content="&#xE72B;"
+                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                FontSize="14"
+                Width="34"
+                Height="34"
+                Padding="0"
+                CornerRadius="17"
+                Background="Transparent"
+                BorderThickness="0"
+                ToolTipService.ToolTip="Back to the tag cloud"
+                AutomationProperties.Name="Back to the tag cloud"
+                Click="BackButton_Click"
+                Visibility="{x:Bind VM.HasSearched, Mode=OneWay, Converter={StaticResource BoolToVisibility}}" />
+
+            <AutoSuggestBox
+                x:Name="QueryBox"
+                Grid.Column="1"
+                PlaceholderText="Search stations by name…"
+                QueryIcon="Find"
+                QuerySubmitted="QueryBox_QuerySubmitted"
+                Width="400"
+                HorizontalAlignment="Left"
+                Margin="10,0,0,0" />
+        </Grid>
+
+        <!-- Idle state: tag word cloud over floating musical notation -->
+        <Grid
             Grid.Row="1"
-            Text="Type a station name and press Enter to search the whole directory."
-            Style="{ThemeResource BodyTextBlockStyle}"
-            Opacity="0.6"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            TextWrapping="Wrap"
-            TextAlignment="Center"
-            MaxWidth="360"
-            Visibility="{x:Bind VM.HasSearched, Mode=OneWay, Converter={StaticResource BoolToVisibility}, ConverterParameter=Invert}" />
+            Visibility="{x:Bind VM.HasSearched, Mode=OneWay, Converter={StaticResource BoolToVisibility}, ConverterParameter=Invert}">
+            <controls:FloatingNotes />
+            <Grid>
+                <controls:WordCloud
+                    TagClicked="Cloud_TagClicked"
+                    Margin="0,20,0,40" />
+                <TextBlock
+                    Text="Pick a vibe below, or search the whole directory above."
+                    Style="{ThemeResource CaptionTextBlockStyle}"
+                    Opacity="0.55"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,4" />
+            </Grid>
+        </Grid>
 
+        <!-- Results -->
         <controls:StationGridView
             Grid.Row="1"
             Items="{x:Bind VM.Stations, Mode=OneWay}"
             IsLoading="{x:Bind VM.IsLoading, Mode=OneWay}"
             EmptyText="No stations match your search."
-            PlayRequested="StationGrid_PlayRequested" />
+            PlayRequested="StationGrid_PlayRequested"
+            Visibility="{x:Bind VM.HasSearched, Mode=OneWay, Converter={StaticResource BoolToVisibility}}" />
     </Grid>
 </Page>

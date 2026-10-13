@@ -18,6 +18,13 @@ public partial class SearchViewModel : ObservableObject
     [ObservableProperty]
     private string _lastQuery = string.Empty;
 
+    /// <summary>Return to the idle tag-cloud state, dropping any results.</summary>
+    public void Reset()
+    {
+        Stations.Clear();
+        HasSearched = false;
+    }
+
     public ObservableCollection<StationItem> Stations { get; } = new();
 
     public async Task SearchAsync(string query)
