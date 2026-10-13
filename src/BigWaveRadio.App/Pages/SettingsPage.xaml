@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="BigWaveRadio.App.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="36,28,36,36" Spacing="20" MaxWidth="760">
+
+            <StackPanel Spacing="4">
+                <TextBlock Text="Settings" Style="{ThemeResource TitleTextBlockStyle}" />
+                <TextBlock
+                    Text="Personalise the look of BigWave Radio"
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Opacity="0.7" />
+            </StackPanel>
+
+            <!-- Theme -->
+            <Border
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="20">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Theme" FontSize="16" FontWeight="SemiBold" />
+                    <TextBlock
+                        Text="Choose how the app looks. “Match system” follows your Windows setting."
+                        Style="{ThemeResource CaptionTextBlockStyle}"
+                        Opacity="0.7" />
+                    <RadioButton x:Name="ThemeSystemRadio" Content="Match system" Tag="system" Checked="ThemeRadio_Checked" />
+                    <RadioButton x:Name="ThemeLightRadio" Content="Light" Tag="light" Checked="ThemeRadio_Checked" />
+                    <RadioButton x:Name="ThemeDarkRadio" Content="Dark" Tag="dark" Checked="ThemeRadio_Checked" />
+                </StackPanel>
+            </Border>
+
+            <!-- Accent colour -->
+            <Border
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="20">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Highlight colour" FontSize="16" FontWeight="SemiBold" />
+                    <TextBlock
+                        Text="Used for buttons, sliders, the play controls and your saved stars."
+                        Style="{ThemeResource CaptionTextBlockStyle}"
+                        Opacity="0.7" />
+                    <StackPanel x:Name="AccentPanel" Orientation="Horizontal" Spacing="10" />
+                </StackPanel>
+            </Border>
+
+            <!-- About -->
+            <Border
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="20">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="About" FontSize="16" FontWeight="SemiBold" />
+                    <TextBlock
+                        Text="BigWave Radio streams live stations from the community-powered radio-browser.info directory. Your library and these settings are stored locally on this PC — nothing leaves your machine except stream audio."
+                        TextWrapping="Wrap"
+                        Style="{ThemeResource CaptionTextBlockStyle}"
+                        Opacity="0.7" />
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>

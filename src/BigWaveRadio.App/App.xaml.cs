@@ -1,3 +1,4 @@
+using BigWaveRadio.App.Services;
 using BigWaveRadio.App.ViewModels;
 using BigWaveRadio.Core;
 using Microsoft.UI.Xaml;
@@ -28,6 +29,7 @@ public partial class App : Application
 
     protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
+        await ThemeService.LoadAsync();
         _window = new MainWindow();
         _window.Activate();
         await Library.LoadAsync();

@@ -1,4 +1,5 @@
 using BigWaveRadio.App.Pages;
+using BigWaveRadio.App.Services;
 using BigWaveRadio.App.ViewModels;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
@@ -39,6 +40,10 @@ public partial class MainWindow : Window
         // 0-size collapsed MediaPlayerElement tears down its video bridge and
         // silently stops playback.
 
+        // Apply the saved theme and accent before the window is shown so there
+        // is no light-to-dark flash on launch.
+        ThemeService.Attach((FrameworkElement)Content, AppWindow);
+
         // Select the default page AFTER the tree is built. Setting
         // IsSelected in XAML would fire SelectionChanged mid-parse, before
         // ContentFrame exists, and crash the XAML parser.
@@ -47,6 +52,13 @@ public partial class MainWindow : Window
 
     private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
     {
+        if (args.IsSettingsSelected)
+        {
+            if (ContentFrame.SourcePageType != typeof(SettingsPage))
+                ContentFrame.Navigate(typeof(SettingsPage));
+            return;
+        }
+
         if (args.SelectedItemContainer is not NavigationViewItem item) return;
 
         var page = item.Tag switch
