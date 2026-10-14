@@ -21,18 +21,26 @@
 
         <!-- Custom title bar (extends into the window chrome) -->
         <Grid x:Name="AppTitleBar" Height="48" VerticalAlignment="Top">
-            <StackPanel Orientation="Horizontal" Spacing="10" Margin="16,0,0,0" VerticalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" MinWidth="120" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" Margin="16,0,0,0" VerticalAlignment="Center">
                 <Image Source="Assets/bigwave-32.png" Width="18" Height="18" VerticalAlignment="Center" />
                 <TextBlock Text="BigWave Radio" VerticalAlignment="Center"
                            Style="{ThemeResource CaptionTextBlockStyle}" FontWeight="SemiBold" />
             </StackPanel>
-            <!-- Always-available global station search (partial names match) -->
+            <!-- Always-available global station search (partial names match).
+                 Stretches with the window between MinWidth and MaxWidth. -->
             <AutoSuggestBox
                 x:Name="GlobalSearchBox"
-                HorizontalAlignment="Center"
+                Grid.Column="1"
+                HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
-                Width="380"
-                MinWidth="200"
+                MinWidth="170"
+                MaxWidth="420"
+                Margin="20,0,20,0"
                 PlaceholderText="Search stations…"
                 QueryIcon="Find"
                 QuerySubmitted="GlobalSearchBox_QuerySubmitted"
@@ -41,6 +49,7 @@
             <!-- Info-panel toggle (kept clear of the system caption buttons) -->
             <ToggleButton
                 x:Name="InfoToggle"
+                Grid.Column="2"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Margin="0,0,150,0"
