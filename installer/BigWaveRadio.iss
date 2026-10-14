@@ -1,7 +1,9 @@
 ; BigWave Radio - Windows setup script (Inno Setup 6.3+/7)
-; Build the self-contained release first:
+; Build the self-contained release first (note: --self-contained is required;
+; without it dotnet build produces a framework-dependent app that prompts
+; for a .NET runtime during setup):
 ;   dotnet build src\BigWaveRadio.App\BigWaveRadio.App.csproj ^
-;     -p:Platform=x64 -c Release -r win-x64
+;     -p:Platform=x64 -c Release -r win-x64 --self-contained
 ; Stage it (the build folder is the complete self-contained app; the
 ; publish\ subfolder inside it is excluded):
 ;   robocopy src\BigWaveRadio.App\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64 ^
