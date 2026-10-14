@@ -243,6 +243,13 @@ public partial class PlayerViewModel : ObservableObject
         Player.Volume = Math.Clamp(value, 0.0, 1.0);
     }
 
+    partial void OnIsPlayingChanged(bool value)
+    {
+        // Drive the realtime spectrum analyser from actual playback state.
+        if (value) Services.SpectrumService.Instance.Start();
+        else Services.SpectrumService.Instance.Stop();
+    }
+
     /// <summary>MediaPlayer callbacks arrive off-UI; re-raise the state there so bindings refresh.</summary>
     private void OnUiThread(Action action)
     {

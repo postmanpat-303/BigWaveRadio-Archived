@@ -51,7 +51,7 @@
                     BorderThickness="0"
                     AutomationProperties.Name="{x:Bind Station.Name}"
                     Tag="{x:Bind}">
-                    <Grid Height="92" Margin="12,8">
+                    <Grid Height="62" Margin="10,5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
@@ -59,28 +59,22 @@
 
                         <Grid
                             Grid.Column="0"
-                            Width="44"
-                            Height="44"
-                            CornerRadius="22"
+                            Width="32"
+                            Height="32"
+                            CornerRadius="16"
                             VerticalAlignment="Center"
                             Background="{ThemeResource AccentFillColorDefaultBrush}">
                             <SymbolIcon Symbol="Play" Foreground="White" />
                         </Grid>
 
-                        <StackPanel Grid.Column="1" Margin="12,0,8,0" VerticalAlignment="Center">
+                        <StackPanel Grid.Column="1" Margin="10,0,6,0" VerticalAlignment="Center" Spacing="1">
                             <TextBlock
                                 Text="{x:Bind Station.Name}"
                                 FontWeight="SemiBold"
                                 TextTrimming="CharacterEllipsis"
                                 MaxLines="1" />
                             <TextBlock
-                                Text="{x:Bind Station.MetaLine}"
-                                Style="{ThemeResource CaptionTextBlockStyle}"
-                                Opacity="0.7"
-                                TextTrimming="CharacterEllipsis"
-                                MaxLines="1" />
-                            <TextBlock
-                                Text="{x:Bind Station.QualityLine}"
+                                Text="{x:Bind Station.SummaryLine}"
                                 Style="{ThemeResource CaptionTextBlockStyle}"
                                 Opacity="0.7"
                                 TextTrimming="CharacterEllipsis"
@@ -112,7 +106,7 @@
              which can take down the whole XAML layout engine (the reported
              "resize to small size -> app exits" crash). -->
         <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <Grid MinWidth="300" MinHeight="108">
+            <Grid MinWidth="260" MinHeight="76">
                 <ItemsRepeater
                     x:Name="Repeater"
                     ItemsSource="{x:Bind Items, Mode=OneWay}"
@@ -120,8 +114,8 @@
                     HorizontalAlignment="Stretch">
                 <ItemsRepeater.Layout>
                     <UniformGridLayout
-                        MinItemWidth="300"
-                        MinItemHeight="108"
+                        MinItemWidth="260"
+                        MinItemHeight="76"
                         ItemsStretch="Fill"
                         ItemsJustification="Start" />
                 </ItemsRepeater.Layout>

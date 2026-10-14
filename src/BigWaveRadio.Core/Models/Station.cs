@@ -59,6 +59,11 @@ public class Station
             Votes > 0 ? $"{Votes} votes" : "",
         }.Where(s => !string.IsNullOrWhiteSpace(s)));
 
+    /// <summary>Meta and quality lines merged into one compact card subtitle.</summary>
+    [JsonIgnore]
+    public string SummaryLine =>
+        string.Join(" · ", new[] { MetaLine, QualityLine }.Where(s => !string.IsNullOrWhiteSpace(s)));
+
     /// <summary>"12,345 votes · 67,890 clicks" popularity line for the info panel.</summary>
     [JsonIgnore]
     public string PopularityLine =>

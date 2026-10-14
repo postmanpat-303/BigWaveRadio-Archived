@@ -3,7 +3,8 @@
     x:Class="BigWaveRadio.App.Controls.NowPlayingBar"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="using:BigWaveRadio.App.Converters">
+    xmlns:converters="using:BigWaveRadio.App.Converters"
+    xmlns:controls="using:BigWaveRadio.App.Controls">
 
     <UserControl.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
@@ -22,6 +23,15 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
+
+        <!-- Realtime 32-bar audio spectrum, behind the station text -->
+        <controls:SpectrumBars
+            Grid.ColumnSpan="5"
+            Height="54"
+            VerticalAlignment="Bottom"
+            IsActive="{Binding IsPlaying}"
+            IsHitTestVisible="False"
+            Opacity="0.6" />
 
         <!-- Current station -->
         <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="4,0,16,0">
