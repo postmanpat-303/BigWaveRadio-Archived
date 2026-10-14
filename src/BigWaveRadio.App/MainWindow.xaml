@@ -31,11 +31,12 @@
                 x:Name="GlobalSearchBox"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Width="300"
-                MaxWidth="40%"
+                Width="380"
+                MinWidth="200"
                 PlaceholderText="Search stations…"
                 QueryIcon="Find"
                 QuerySubmitted="GlobalSearchBox_QuerySubmitted"
+                TextChanged="GlobalSearchBox_TextChanged"
                 ToolTipService.ToolTip="Search any station by name — partial words work" />
             <!-- Info-panel toggle (kept clear of the system caption buttons) -->
             <ToggleButton

@@ -12,6 +12,30 @@ public partial class SearchPage : Page, IBitrateFilterable
     public SearchPage()
     {
         InitializeComponent();
+
+        // Live search: run 450 ms after the user stops typing.
+        _debounce = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread()?.CreateTimer()!;
+        if (_debounce is not null)
+        {
+            _debounce.Interval = TimeSpan.FromMilliseconds(450);
+            _debounce.IsRepeating = false;
+            _debounce.Tick += (_, _) =>
+            {
+                _debounce.Stop();
+                var q = QueryBox.Text?.Trim() ?? string.Empty;
+                if (q.Length >= 2) _ = VM.SearchAsync(q);
+                else if (q.Length == 0) VM.Reset();
+            };
+        }
+    }
+
+    private readonly Microsoft.UI.Dispatching.DispatcherQueueTimer? _debounce;
+
+    private void QueryBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+        if (args.Reason != AutoSuggestionBoxTextChangeReason.UserInput) return;
+        _debounce?.Stop();
+        _debounce?.Start();
     }
 
     public void ReloadForBitrateFilter() => VM.Reload();

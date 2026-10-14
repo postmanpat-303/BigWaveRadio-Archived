@@ -2,6 +2,7 @@ using BigWaveRadio.App.Pages;
 using BigWaveRadio.App.Services;
 using BigWaveRadio.App.ViewModels;
 using Microsoft.UI;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -68,6 +69,15 @@ public partial class MainWindow : Window
         // IsSelected in XAML would fire SelectionChanged mid-parse, before
         // ContentFrame exists, and crash the XAML parser.
         NavView.SelectedItem = DiscoverItem;
+
+        // Debounce for the live title-bar search: fire 450 ms after the last keystroke.
+        _searchDebounce = DispatcherQueue.GetForCurrentThread()?.CreateTimer()!;
+        if (_searchDebounce is not null)
+        {
+            _searchDebounce.Interval = TimeSpan.FromMilliseconds(450);
+            _searchDebounce.IsRepeating = false;
+            _searchDebounce.Tick += OnSearchDebounceTick;
+        }
     }
 
     // ---- Bitrate filter (nav pane) -----------------------------------------
@@ -105,11 +115,36 @@ public partial class MainWindow : Window
 
     // ---- Global title-bar search ----------------------------------------------
 
+    private readonly DispatcherQueueTimer _searchDebounce;
+
     private void GlobalSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
         var query = args.QueryText?.Trim() ?? string.Empty;
         if (query.Length == 0) return;
+        _searchDebounce.Stop();
+        RunGlobalSearch(query);
+    }
 
+    private void GlobalSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+        // Live search: restart the debounce clock on every keystroke.
+        if (args.Reason != AutoSuggestionBoxTextChangeReason.UserInput) return;
+        _searchDebounce.Stop();
+        _searchDebounce.Start();
+    }
+
+    private void OnSearchDebounceTick(DispatcherQueueTimer sender, object args)
+    {
+        sender.Stop();
+        var query = GlobalSearchBox.Text?.Trim() ?? string.Empty;
+        if (query.Length >= 2)
+            RunGlobalSearch(query);
+        else if (query.Length == 0 && ContentFrame.Content is SearchPage page)
+            page.VM.Reset(); // cleared the box → back to the tag cloud
+    }
+
+    private void RunGlobalSearch(string query)
+    {
         // Select the Search nav item; SelectionChanged navigates there unless
         // we are already on it. Navigate is synchronous, so by this point the
         // frame holds the page we want to run the search on.
