@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
 using Windows.Foundation;
 
 namespace BigWaveRadio.App.Controls;
@@ -166,8 +167,45 @@ public sealed partial class WordCloud : UserControl
             Canvas.SetTop(word.Button, bestY);
             Root.Children.Add(word.Button);
             placed.Add(new Rect(bestX - 8, bestY - 8, size.Width + 16, size.Height + 16));
+            StartFloating(word, rnd);
             _words.Add(word);
         }
+    }
+
+    /// <summary>
+    /// Gives a word its slow, forever-drifting float: a gentle vertical bob
+    /// and a slightly detuned horizontal sway (sine-eased, auto-reversed,
+    /// random phase) so the cloud breathes instead of sliding in lockstep.
+    /// </summary>
+    private static void StartFloating(CloudWord word, Random rnd)
+    {
+        var sb = new Storyboard { RepeatBehavior = RepeatBehavior.Forever, AutoReverse = true };
+
+        var bob = new DoubleAnimation
+        {
+            From = 0,
+            To = -(2.5 + rnd.NextDouble() * 3.5),
+            Duration = new Duration(TimeSpan.FromSeconds(3.5 + rnd.NextDouble() * 3)),
+            BeginTime = TimeSpan.FromSeconds(rnd.NextDouble() * 2.5),
+            EasingFunction = new SineEase { EasingMode = EasingMode.EaseInOut },
+        };
+        Storyboard.SetTarget(bob, word.Float);
+        Storyboard.SetTargetProperty(bob, "Y");
+        sb.Children.Add(bob);
+
+        var sway = new DoubleAnimation
+        {
+            From = 0,
+            To = (rnd.NextDouble() < 0.5 ? -1 : 1) * (1.5 + rnd.NextDouble() * 2.5),
+            Duration = new Duration(TimeSpan.FromSeconds(4.5 + rnd.NextDouble() * 4)),
+            BeginTime = TimeSpan.FromSeconds(rnd.NextDouble() * 2.5),
+            EasingFunction = new SineEase { EasingMode = EasingMode.EaseInOut },
+        };
+        Storyboard.SetTarget(sway, word.Float);
+        Storyboard.SetTargetProperty(sway, "X");
+        sb.Children.Add(sway);
+
+        sb.Begin();
     }
 
     private CloudWord CreateWord(RadioTag tag, double fontSize, double frac)
@@ -198,6 +236,10 @@ public sealed partial class WordCloud : UserControl
         box.Children.Add(ghost);
         box.Children.Add(main);
 
+        // The button carries two transforms: the static tilt and the slow
+        // float. Hit-testing follows RenderTransform, so the clickable area
+        // drifts along with the word while it floats.
+        var floatTransform = new TranslateTransform();
         var button = new Button
         {
             Content = box,
@@ -205,7 +247,14 @@ public sealed partial class WordCloud : UserControl
             Background = new SolidColorBrush(Microsoft.UI.Colors.Transparent),
             BorderThickness = new Thickness(0),
             CornerRadius = new CornerRadius(8),
-            RenderTransform = new RotateTransform { Angle = -10 + 20 * frac },
+            RenderTransform = new TransformGroup
+            {
+                Children =
+                {
+                    new RotateTransform { Angle = -10 + 20 * frac },
+                    floatTransform,
+                },
+            },
             RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5),
         };
         ToolTipService.SetToolTip(button, $"{tag.StationCount:N0} stations");
@@ -219,6 +268,7 @@ public sealed partial class WordCloud : UserControl
             Main = main,
             Ghost = ghost,
             Jitter = jitter,
+            Float = floatTransform,
         };
 
         // One handler per word, created once so Start/Stop subscribe and
@@ -338,6 +388,7 @@ public sealed partial class WordCloud : UserControl
         public required TextBlock Main { get; init; }
         public required TextBlock Ghost { get; init; }
         public required TranslateTransform Jitter { get; init; }
+        public required TranslateTransform Float { get; init; }
         public DispatcherTimer? Timer { get; set; }
         public EventHandler<object>? TickHandler { get; set; }
         public int Tick { get; set; }
