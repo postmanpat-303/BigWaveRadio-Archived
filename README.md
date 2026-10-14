@@ -14,15 +14,27 @@
 ## What it does
 
 - **Discover** — trending, most popular and recently added stations, one tap away
-- **Search** — full-text search across the entire community directory
+- **Search** — full-text search across the entire community directory, plus a
+  floating **tag word cloud** shaped like a cloud: hover a word to glitch it,
+  click it to search; faint musical notation drifts up behind it
 - **Browse** — by tag or by country, with live station counts
 - **My Library** — star any station for quick reference; saved locally on your PC
   (`%LocalAppData%\BigWaveRadio\library.json`). Stations are always **streamed live**,
   never downloaded
+- **Themes** — light / dark / match-system, with nine accent colours
+  (Settings page); station cards hover-highlight in your accent
 - **Now playing bar** — play/pause/stop, volume, **sleep timer** (15/30/60 min),
   one-tap save-to-library
 - **Community friendly** — load is spread across radio-browser mirrors and every
   play reports a click back to the directory
+
+## Download
+
+Grab [`BigWaveRadio-Setup-0.1.exe`](https://github.com/postmanpat-303/BigWaveRadio/releases/download/v0.1/BigWaveRadio-Setup-0.1.exe)
+from the [v0.1 release](https://github.com/postmanpat-303/BigWaveRadio/releases/tag/v0.1)
+and run it. The wizard installs to Program Files with a Start Menu entry and a
+proper uninstaller (one UAC prompt). Self-contained — no .NET runtime needed.
+Requires Windows 10 19041+ (x64) or Windows 11.
 
 ## Windows 11 native
 
@@ -66,6 +78,18 @@ Or open `BigWaveRadio.slnx` in Visual Studio 2022 (Windows App SDK workload) and
 The app is unpackaged (no MSIX installer) and the Windows App SDK runtime is
 self-contained, so the output folder can be zipped and copied to any Windows 10
 1809+ / Windows 11 machine as-is.
+
+## Build the setup package
+
+With [Inno Setup 6.3+](https://jrsoftware.org/isdl.php) installed:
+
+```powershell
+dotnet build src\BigWaveRadio.App\BigWaveRadio.App.csproj -p:Platform=x64 -c Release -r win-x64 --self-contained
+robocopy src\BigWaveRadio.App\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64 installer\staging /E /XD publish
+& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer\BigWaveRadio.iss
+```
+
+Output: `dist\BigWaveRadio-Setup-0.1.exe`.
 
 ## Notes
 
