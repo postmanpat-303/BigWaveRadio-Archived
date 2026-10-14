@@ -103,6 +103,22 @@ public partial class MainWindow : Window
         UpdatePanelVisibility();
     }
 
+    // ---- Global title-bar search ----------------------------------------------
+
+    private void GlobalSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+    {
+        var query = args.QueryText?.Trim() ?? string.Empty;
+        if (query.Length == 0) return;
+
+        // Select the Search nav item; SelectionChanged navigates there unless
+        // we are already on it. Navigate is synchronous, so by this point the
+        // frame holds the page we want to run the search on.
+        NavView.SelectedItem = SearchItem;
+
+        if (ContentFrame.Content is SearchPage page)
+            page.RunSearch(query);
+    }
+
     // ---- Navigation -----------------------------------------------------------
 
     private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)

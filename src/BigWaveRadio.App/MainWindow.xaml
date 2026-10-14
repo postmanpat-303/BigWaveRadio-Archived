@@ -26,6 +26,17 @@
                 <TextBlock Text="BigWave Radio" VerticalAlignment="Center"
                            Style="{ThemeResource CaptionTextBlockStyle}" FontWeight="SemiBold" />
             </StackPanel>
+            <!-- Always-available global station search (partial names match) -->
+            <AutoSuggestBox
+                x:Name="GlobalSearchBox"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Width="300"
+                MaxWidth="40%"
+                PlaceholderText="Search stations…"
+                QueryIcon="Find"
+                QuerySubmitted="GlobalSearchBox_QuerySubmitted"
+                ToolTipService.ToolTip="Search any station by name — partial words work" />
             <!-- Info-panel toggle (kept clear of the system caption buttons) -->
             <ToggleButton
                 x:Name="InfoToggle"
@@ -57,7 +68,7 @@
 
                 <NavigationView.MenuItems>
                     <NavigationViewItem x:Name="DiscoverItem" Content="Discover" Tag="discover" Icon="Home" />
-                    <NavigationViewItem Content="Search" Tag="search" Icon="Find" />
+                    <NavigationViewItem x:Name="SearchItem" Content="Search" Tag="search" Icon="Find" />
                     <NavigationViewItem Content="My Library" Tag="library" Icon="Favorite" />
                     <NavigationViewItemSeparator />
                     <NavigationViewItem Content="Tags" Tag="tags" Icon="List" />

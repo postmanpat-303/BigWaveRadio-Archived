@@ -16,6 +16,13 @@ public partial class SearchPage : Page, IBitrateFilterable
 
     public void ReloadForBitrateFilter() => VM.Reload();
 
+    /// <summary>Run a search from anywhere in the app (e.g. the title-bar search box).</summary>
+    public void RunSearch(string query)
+    {
+        QueryBox.Text = query;
+        _ = VM.SearchAsync(query);
+    }
+
     private void QueryBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
         _ = VM.SearchAsync(args.QueryText);
