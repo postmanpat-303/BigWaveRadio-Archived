@@ -21,6 +21,11 @@
 - **My Library** — star any station for quick reference; saved locally on your PC
   (`%LocalAppData%\BigWaveRadio\library.json`). Stations are always **streamed live**,
   never downloaded
+- **Bitrate filter** — show only streams at or above 64 / 128 / 192 / 256 / 320 kbps,
+  straight from the side menu; applies to every list and is remembered between sessions
+- **Station info panel** — the playing station's logo, tags, votes and homepage link
+  in a panel on the right (toggle in the title bar)
+- **Live status** — the bar shows Connecting… while the stream opens, Connected once playing
 - **Themes** — light / dark / match-system, with nine accent colours
   (Settings page); station cards hover-highlight in your accent
 - **Now playing bar** — play/pause/stop, volume, **sleep timer** (15/30/60 min),
@@ -30,8 +35,8 @@
 
 ## Download
 
-Grab [`BigWaveRadio-Setup-0.1.exe`](https://github.com/postmanpat-303/BigWaveRadio/releases/download/v0.1/BigWaveRadio-Setup-0.1.exe)
-from the [v0.1 release](https://github.com/postmanpat-303/BigWaveRadio/releases/tag/v0.1)
+Grab [`BigWaveRadio-Setup-0.2.exe`](https://github.com/postmanpat-303/BigWaveRadio/releases/download/v0.2/BigWaveRadio-Setup-0.2.exe)
+from the [v0.2 release](https://github.com/postmanpat-303/BigWaveRadio/releases/tag/v0.2)
 and run it. The wizard installs to Program Files with a Start Menu entry and a
 proper uninstaller (one UAC prompt). Self-contained — no .NET runtime needed.
 Requires Windows 10 19041+ (x64) or Windows 11.
