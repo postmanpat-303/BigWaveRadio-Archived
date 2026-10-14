@@ -15,7 +15,7 @@ namespace BigWaveRadio.App.Controls;
 /// </summary>
 public sealed partial class WordCloud : UserControl
 {
-    private const int MaxWords = 60;
+    private const int MaxWords = 48;
     private const int LayoutSeed = 42;
 
     private static readonly char[] GlitchGlyphs = { '▚', '▞', '▛', '▟', '▓', '▒', '#', '%', '&' };
@@ -90,6 +90,42 @@ public sealed partial class WordCloud : UserControl
         var lo = counts.Min();
         var hi = Math.Max(lo + 0.001, counts.Max());
 
+        // Cloud silhouette: a union of ellipses (wide base, bumps on top).
+        // Candidates are sampled inside the union so the whole ensemble
+        // reads as one puffy cloud rather than a rectangle of words.
+        var margin = 8.0;
+        var halfW = (w - margin * 2) / 2;
+        var halfH = (h - margin * 2) / 2;
+        var cx = margin + halfW;
+        var cy = margin + halfH;
+        // Sampling weights favour the bumps over the base, so the top reads
+        // as humps and the bottom stays flatter - a cartoon-cloud silhouette.
+        (double rx, double ry, double ox, double oy, double weight)[] blobs =
+        {
+            (0.62, 0.34, 0.00, 0.26, 0.12), // wide, low base
+            (0.34, 0.50, -0.34, -0.04, 0.20), // left bump
+            (0.40, 0.80, 0.00, -0.26, 0.28), // tall centre bump
+            (0.32, 0.46, 0.36, -0.04, 0.18), // right bump
+            (0.24, 0.34, -0.22, -0.52, 0.11), // small top puff
+            (0.22, 0.30, 0.26, -0.46, 0.11), // small top-right puff
+        };
+
+        (double x, double y) NextCandidate()
+        {
+            var pick = rnd.NextDouble() * blobs.Sum(b => b.weight);
+            var blob = blobs[0];
+            foreach (var b in blobs)
+            {
+                pick -= b.weight;
+                if (pick <= 0) { blob = b; break; }
+            }
+            var angle = rnd.NextDouble() * Math.PI * 2;
+            var radius = Math.Sqrt(rnd.NextDouble()); // uniform over the ellipse
+            return (
+                cx + (blob.ox + blob.rx * radius * Math.Cos(angle)) * halfW,
+                cy + (blob.oy + blob.ry * radius * Math.Sin(angle)) * halfH);
+        }
+
         _words = new List<CloudWord>();
         var placed = new List<Rect>();
 
@@ -108,19 +144,21 @@ public sealed partial class WordCloud : UserControl
             word.Box.Width = size.Width;
             word.Box.Height = size.Height;
 
-            // Rejection sampling: prefer the candidate that overlaps the least.
+            // Rejection sampling: prefer the in-cloud candidate that overlaps
+            // the least; fall back to the least-bad one when the cloud fills.
             var bestX = 0d; var bestY = 0d; var bestScore = double.MaxValue;
-            for (var attempt = 0; attempt < 80; attempt++)
+            for (var attempt = 0; attempt < 120; attempt++)
             {
-                var x = rnd.NextDouble() * Math.Max(1, w - size.Width);
-                var y = rnd.NextDouble() * Math.Max(1, h - size.Height);
+                var (px, py) = NextCandidate();
+                var x = Math.Clamp(px - size.Width / 2, 0, Math.Max(0, w - size.Width));
+                var y = Math.Clamp(py - size.Height / 2, 0, Math.Max(0, h - size.Height));
                 var score = OverlapScore(x, y, size.Width, size.Height, placed);
                 if (score < bestScore)
                 {
                     bestScore = score;
                     bestX = x;
                     bestY = y;
-                    if (score == 0 && attempt > 8) break;
+                    if (score == 0 && attempt > 12) break;
                 }
             }
 
