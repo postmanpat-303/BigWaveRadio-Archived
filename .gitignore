@@ -21,3 +21,7 @@ Desktop.ini
 
 # Local build helper (works around a stripped shell environment)
 restore.cmd
+
+# Installer staging and output
+installer/staging/
+dist/
