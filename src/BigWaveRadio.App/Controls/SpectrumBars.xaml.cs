@@ -72,15 +72,26 @@ public sealed partial class SpectrumBars : UserControl
         }
     }
 
+    private bool _decayed = true;
+
     private void OnTick(DispatcherQueueTimer sender, object args)
     {
-        for (int i = 0; i < Bars; i++)
+        if (!IsActive)
         {
-            double level = IsActive ? SpectrumService.Instance.Snapshot()[i] : 0;
-            if (!IsActive)
-                level = Math.Max(0, (_bar[i].Height / Math.Max(1, ActualHeight)) - 0.08);
-            _bar[i].Height = Math.Max(2, level * ActualHeight);
+            // Vanish entirely once, then go idle so dozens of card
+            // visualisers don't burn frames doing nothing.
+            if (_decayed) return;
+            _decayed = true;
+            foreach (var bar in _bar)
+                bar.Height = 0;
+            return;
         }
+
+        _decayed = false;
+        var levels = SpectrumService.Instance.Snapshot();
+        double h = ActualHeight;
+        for (int i = 0; i < Bars; i++)
+            _bar[i].Height = Math.Max(2, levels[i] * h);
     }
 
     /// <summary>Gradient across the bars: accent → softened accent (direction follows the theme).</summary>

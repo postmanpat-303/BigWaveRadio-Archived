@@ -14,14 +14,23 @@ public partial class StationItem : ObservableObject
     [ObservableProperty]
     private bool _isInLibrary;
 
+    /// <summary>True while this station is the one currently playing.</summary>
+    public bool IsPlaying =>
+        PlayerViewModel.Instance.CurrentStation?.StationUuid == Station.StationUuid
+        && PlayerViewModel.Instance.IsPlaying;
+
     public StationItem(Station station)
     {
         Station = station;
         IsInLibrary = App.Library.Contains(station.StationUuid);
         App.Library.Changed += OnLibraryChanged;
+        PlayerViewModel.PlaybackChanged += OnPlaybackChanged;
     }
 
     public void ToggleLibrary() => App.Library.Toggle(Station);
+
+    private void OnPlaybackChanged(object? sender, EventArgs e)
+        => OnPropertyChanged(nameof(IsPlaying));
 
     private void OnLibraryChanged(object? sender, EventArgs e)
     {

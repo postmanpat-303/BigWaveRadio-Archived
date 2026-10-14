@@ -16,6 +16,9 @@ public partial class PlayerViewModel : ObservableObject
 {
     public static PlayerViewModel Instance { get; } = new();
 
+    /// <summary>Raised when the current station or the playing state changes.</summary>
+    public static event EventHandler? PlaybackChanged;
+
     public MediaPlayer Player { get; } = new() { AutoPlay = false };
 
     [ObservableProperty]
@@ -248,6 +251,12 @@ public partial class PlayerViewModel : ObservableObject
         // Drive the realtime spectrum analyser from actual playback state.
         if (value) Services.SpectrumService.Instance.Start();
         else Services.SpectrumService.Instance.Stop();
+        PlaybackChanged?.Invoke(null, EventArgs.Empty);
+    }
+
+    partial void OnCurrentStationChanged(Station? value)
+    {
+        PlaybackChanged?.Invoke(null, EventArgs.Empty);
     }
 
     /// <summary>MediaPlayer callbacks arrive off-UI; re-raise the state there so bindings refresh.</summary>

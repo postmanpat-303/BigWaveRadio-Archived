@@ -24,15 +24,6 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <!-- Realtime 32-bar audio spectrum, behind the station text -->
-        <controls:SpectrumBars
-            Grid.ColumnSpan="5"
-            Height="54"
-            VerticalAlignment="Bottom"
-            IsActive="{Binding IsPlaying}"
-            IsHitTestVisible="False"
-            Opacity="0.6" />
-
         <!-- Current station -->
         <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="4,0,16,0">
             <TextBlock

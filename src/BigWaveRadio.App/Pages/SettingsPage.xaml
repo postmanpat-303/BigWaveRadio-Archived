@@ -98,7 +98,7 @@
                             Background="{ThemeResource CardStrokeColorDefaultBrush}"
                             Margin="0,6" />
                         <TextBlock
-                            Text="Produced by Derek Heasley"
+                            Text="Created by Derek Heasley"
                             FontWeight="SemiBold" />
                         <TextBlock
                             Text="Inspired by ShortWave on Linux, I wanted a nice clean version for Windows."
