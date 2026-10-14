@@ -31,6 +31,14 @@ public partial class PlayerViewModel : ObservableObject
     [ObservableProperty]
     private bool _currentStationInLibrary;
 
+    /// <summary>True when there is a station before the current one in the queue.</summary>
+    [ObservableProperty]
+    private bool _canGoPrevious;
+
+    /// <summary>True when there is a station after the current one in the queue.</summary>
+    [ObservableProperty]
+    private bool _canGoNext;
+
     [ObservableProperty]
     private double _volume = 0.8;
 
@@ -41,6 +49,14 @@ public partial class PlayerViewModel : ObservableObject
     private string _sleepRemainingText = string.Empty;
 
     public bool HasStation => CurrentStation is not null;
+
+    /// <summary>
+    /// The station list the current pick came from (Discover grid, search results…).
+    /// Previous/Next walk this list. Reset to just the current station when a
+    /// pick is not part of the list.
+    /// </summary>
+    private List<Station> _queue = new();
+    private int _queueIndex = -1;
 
     private readonly DispatcherQueueTimer? _sleepTimer;
     private readonly DispatcherQueue? _dispatcher;
@@ -63,8 +79,74 @@ public partial class PlayerViewModel : ObservableObject
         }
     }
 
+    /// <summary>
+    /// Registers the list a play request came from, so Previous/Next can walk it.
+    /// Called by the station grid before it raises <see cref="PlayRequested"/>.
+    /// </summary>
+    public void SetQueue(System.Collections.IList items)
+    {
+        _queue = items.OfType<StationItem>().Select(i => i.Station).ToList();
+        SyncQueueIndex();
+    }
+
+    private void SyncQueueIndex()
+    {
+        if (CurrentStation is null)
+        {
+            _queueIndex = -1;
+        }
+        else
+        {
+            _queueIndex = _queue.FindIndex(s => s.StationUuid == CurrentStation.StationUuid);
+            if (_queueIndex < 0)
+            {
+                // Current station is not from this list — treat it as a one-off.
+                _queue = new List<Station> { CurrentStation };
+                _queueIndex = 0;
+            }
+        }
+        CanGoPrevious = _queueIndex > 0;
+        CanGoNext = _queueIndex >= 0 && _queueIndex < _queue.Count - 1;
+    }
+
+    [RelayCommand]
+    private void PreviousStation()
+    {
+        if (!CanGoPrevious) return;
+        Play(_queue[_queueIndex - 1], fromQueue: true);
+    }
+
+    [RelayCommand]
+    private void NextStation()
+    {
+        if (!CanGoNext) return;
+        Play(_queue[_queueIndex + 1], fromQueue: true);
+    }
+
     public void Play(Station station)
     {
+        Play(station, fromQueue: false);
+    }
+
+    private void Play(Station station, bool fromQueue)
+    {
+        if (!fromQueue || _queueIndex < 0 || _queueIndex >= _queue.Count ||
+            _queue[_queueIndex].StationUuid != station.StationUuid)
+        {
+            var idx = _queue.FindIndex(s => s.StationUuid == station.StationUuid);
+            if (idx >= 0)
+            {
+                _queueIndex = idx;
+            }
+            else
+            {
+                _queue = new List<Station> { station };
+                _queueIndex = 0;
+            }
+        }
+        CanGoPrevious = _queueIndex > 0;
+        CanGoNext = _queueIndex < _queue.Count - 1;
+
         CurrentStation = station;
         RefreshLibraryState();
         try

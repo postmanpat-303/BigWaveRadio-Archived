@@ -101,7 +101,11 @@ public sealed partial class StationGridView : UserControl
         // ItemsRepeater does not set DataContext on data-template roots,
         // so the StationItem is carried in Tag instead.
         if (sender is FrameworkElement { Tag: StationItem item })
+        {
+            // Hand the player the whole visible list so Previous/Next can walk it.
+            ViewModels.PlayerViewModel.Instance.SetQueue(Items);
             PlayRequested?.Invoke(this, item);
+        }
     }
 
     private void Star_Click(object sender, RoutedEventArgs e)

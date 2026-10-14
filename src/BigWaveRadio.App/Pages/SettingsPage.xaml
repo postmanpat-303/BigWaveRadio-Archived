@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="36,28,36,36" Spacing="20" MaxWidth="760">
+        <StackPanel Margin="36,28,36,36" Spacing="20" MaxWidth="860">
 
             <StackPanel Spacing="4">
                 <TextBlock Text="Settings" Style="{ThemeResource TitleTextBlockStyle}" />
@@ -15,41 +15,56 @@
                     Opacity="0.7" />
             </StackPanel>
 
-            <!-- Theme -->
-            <Border
-                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                BorderThickness="1"
-                CornerRadius="8"
-                Padding="20">
-                <StackPanel Spacing="10">
-                    <TextBlock Text="Theme" FontSize="16" FontWeight="SemiBold" />
-                    <TextBlock
-                        Text="Choose how the app looks. “Match system” follows your Windows setting."
-                        Style="{ThemeResource CaptionTextBlockStyle}"
-                        Opacity="0.7" />
-                    <RadioButton x:Name="ThemeSystemRadio" Content="Match system" Tag="system" Checked="ThemeRadio_Checked" />
-                    <RadioButton x:Name="ThemeLightRadio" Content="Light" Tag="light" Checked="ThemeRadio_Checked" />
-                    <RadioButton x:Name="ThemeDarkRadio" Content="Dark" Tag="dark" Checked="ThemeRadio_Checked" />
-                </StackPanel>
-            </Border>
+            <!-- Theme + Highlight colour, side by side -->
+            <Grid ColumnSpacing="20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" MinWidth="200" />
+                    <ColumnDefinition Width="*" MinWidth="200" />
+                </Grid.ColumnDefinitions>
 
-            <!-- Accent colour -->
-            <Border
-                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                BorderThickness="1"
-                CornerRadius="8"
-                Padding="20">
-                <StackPanel Spacing="10">
-                    <TextBlock Text="Highlight colour" FontSize="16" FontWeight="SemiBold" />
-                    <TextBlock
-                        Text="Used for buttons, sliders, the play controls and your saved stars."
-                        Style="{ThemeResource CaptionTextBlockStyle}"
-                        Opacity="0.7" />
-                    <StackPanel x:Name="AccentPanel" Orientation="Horizontal" Spacing="10" />
-                </StackPanel>
-            </Border>
+                <!-- Theme -->
+                <Border
+                    Grid.Column="0"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Theme" FontSize="16" FontWeight="SemiBold" />
+                        <TextBlock
+                            Text="“Match system” follows your Windows setting."
+                            Style="{ThemeResource CaptionTextBlockStyle}"
+                            Opacity="0.7" />
+                        <RadioButton x:Name="ThemeSystemRadio" Content="Match system" Tag="system" Checked="ThemeRadio_Checked" />
+                        <RadioButton x:Name="ThemeLightRadio" Content="Light" Tag="light" Checked="ThemeRadio_Checked" />
+                        <RadioButton x:Name="ThemeDarkRadio" Content="Dark" Tag="dark" Checked="ThemeRadio_Checked" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Accent colour -->
+                <Border
+                    Grid.Column="1"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Highlight colour" FontSize="16" FontWeight="SemiBold" />
+                        <TextBlock
+                            Text="Used for buttons, sliders, the play controls and your saved stars."
+                            Style="{ThemeResource CaptionTextBlockStyle}"
+                            Opacity="0.7" />
+                        <VariableSizedWrapGrid
+                            x:Name="AccentPanel"
+                            Orientation="Horizontal"
+                            ItemWidth="44"
+                            ItemHeight="44"
+                            HorizontalAlignment="Left" />
+                    </StackPanel>
+                </Border>
+            </Grid>
 
             <!-- About -->
             <Border
@@ -57,15 +72,57 @@
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                 BorderThickness="1"
                 CornerRadius="8"
-                Padding="20">
-                <StackPanel Spacing="6">
-                    <TextBlock Text="About" FontSize="16" FontWeight="SemiBold" />
-                    <TextBlock
-                        Text="BigWave Radio streams live stations from the community-powered radio-browser.info directory. Your library and these settings are stored locally on this PC — nothing leaves your machine except stream audio."
-                        TextWrapping="Wrap"
-                        Style="{ThemeResource CaptionTextBlockStyle}"
-                        Opacity="0.7" />
-                </StackPanel>
+                Padding="24">
+                <Grid ColumnSpacing="20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Image
+                        Grid.Column="0"
+                        Source="ms-appx:///Assets/bigwave-logo-src.png"
+                        Width="110"
+                        Height="110"
+                        Stretch="Uniform" />
+
+                    <StackPanel Grid.Column="1" Spacing="6" VerticalAlignment="Center">
+                        <TextBlock Text="About BigWave Radio" FontSize="16" FontWeight="SemiBold" />
+                        <TextBlock
+                            Text="BigWave Radio streams live stations from the community-powered radio-browser.info directory. Your library and these settings are stored locally on this PC — nothing leaves your machine except stream audio."
+                            TextWrapping="Wrap"
+                            Style="{ThemeResource CaptionTextBlockStyle}"
+                            Opacity="0.7" />
+                        <Border
+                            Height="1"
+                            Background="{ThemeResource CardStrokeColorDefaultBrush}"
+                            Margin="0,6" />
+                        <TextBlock
+                            Text="Produced by Derek Heasley"
+                            FontWeight="SemiBold" />
+                        <TextBlock
+                            Text="Inspired by ShortWave on Linux, I wanted a nice clean version for Windows."
+                            TextWrapping="Wrap"
+                            Style="{ThemeResource CaptionTextBlockStyle}"
+                            Opacity="0.7" />
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock
+                                Text="If you find this app useful, you can donate to"
+                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                Opacity="0.7"
+                                VerticalAlignment="Center" />
+                            <HyperlinkButton
+                                Content="paypal.me/derekh100"
+                                NavigateUri="https://paypal.me/derekh100"
+                                Padding="0"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock
+                            Text="Thank you. :)"
+                            Style="{ThemeResource CaptionTextBlockStyle}"
+                            Opacity="0.7" />
+                    </StackPanel>
+                </Grid>
             </Border>
 
         </StackPanel>

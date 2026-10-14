@@ -44,6 +44,15 @@
 
         <!-- Transport -->
         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+            <Button
+                Command="{Binding PreviousStationCommand}"
+                IsEnabled="{Binding CanGoPrevious}"
+                AutomationProperties.Name="Previous station"
+               
+                ToolTipService.ToolTip="Previous station"
+                MinWidth="40">
+                <SymbolIcon Symbol="Previous" />
+            </Button>
             <ToggleButton
                 IsChecked="{Binding IsPlaying, Mode=OneWay}"
                 Command="{Binding TogglePlayPauseCommand}"
@@ -65,6 +74,15 @@
                 ToolTipService.ToolTip="Stop"
                 MinWidth="40">
                 <SymbolIcon Symbol="Stop" />
+            </Button>
+            <Button
+                Command="{Binding NextStationCommand}"
+                IsEnabled="{Binding CanGoNext}"
+                AutomationProperties.Name="Next station"
+               
+                ToolTipService.ToolTip="Next station"
+                MinWidth="40">
+                <SymbolIcon Symbol="Next" />
             </Button>
         </StackPanel>
 

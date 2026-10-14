@@ -43,7 +43,7 @@
                     Height="96"
                     HorizontalAlignment="Left"
                     Stretch="UniformToFill"
-                    Source="Assets/bigwave-logo-src.png" />
+                    Source="ms-appx:///Assets/bigwave-logo-src.png" />
                 <TextBlock
                     Text="{Binding CurrentStation.Name, FallbackValue=''}"
                     Style="{ThemeResource SubtitleTextBlockStyle}"
