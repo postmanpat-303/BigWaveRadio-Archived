@@ -83,8 +83,11 @@ public sealed partial class WordCloud : UserControl
         var h = Root.ActualHeight;
         if (w < 80 || h < 80) return;
 
-        Root.Children.Clear();
+        // Stop the previous words' forever-running float storyboards BEFORE
+        // detaching their buttons. Left running, they keep animating detached
+        // transforms and pile up on every resize-driven relayout.
         StopAllGlitches();
+        Root.Children.Clear();
 
         var rnd = new Random(LayoutSeed); // stable arrangement across resizes
         var counts = _tags.Select(t => Math.Log(Math.Max(1, t.StationCount))).ToList();
@@ -180,6 +183,7 @@ public sealed partial class WordCloud : UserControl
     private static void StartFloating(CloudWord word, Random rnd)
     {
         var sb = new Storyboard { RepeatBehavior = RepeatBehavior.Forever, AutoReverse = true };
+        word.FloatStoryboard = sb;
 
         var bob = new DoubleAnimation
         {
@@ -358,6 +362,10 @@ public sealed partial class WordCloud : UserControl
                 word.Timer.Stop();
                 word.Timer.Tick -= word.TickHandler!;
             }
+            // Halt the forever-float storyboard; it targets this word's
+            // transform and would otherwise keep running after rebuilds.
+            try { word.FloatStoryboard?.Stop(); } catch { /* already detached */ }
+            word.FloatStoryboard = null;
             RestoreGlyph(word);
             word.Jitter.X = 0;
             word.Jitter.Y = 0;
@@ -391,6 +399,7 @@ public sealed partial class WordCloud : UserControl
         public required TranslateTransform Float { get; init; }
         public DispatcherTimer? Timer { get; set; }
         public EventHandler<object>? TickHandler { get; set; }
+        public Storyboard? FloatStoryboard { get; set; }
         public int Tick { get; set; }
         public int SwapIndex { get; set; } = -1;
         public char SwapOriginal { get; set; }

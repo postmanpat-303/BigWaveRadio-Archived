@@ -23,6 +23,19 @@ public partial class App : Application
     {
         InitializeComponent();
 
+        // Log any unhandled XAML/managed exception before the process dies,
+        // so a crash report can be diagnosed from %TEMP%\bwr-error.log.
+        UnhandledException += (_, e) =>
+        {
+            try
+            {
+                e.Handled = true;
+                File.AppendAllText(Path.Combine(Path.GetTempPath(), "bwr-error.log"),
+                    $"{DateTime.Now:u}  Unhandled exception:{Environment.NewLine}{e.Exception}{Environment.NewLine}");
+            }
+            catch { /* logging must never make things worse */ }
+        };
+
         // Keep the now-playing "save to library" star in sync.
         Library.Changed += (_, _) => PlayerViewModel.Instance.RefreshLibraryState();
     }

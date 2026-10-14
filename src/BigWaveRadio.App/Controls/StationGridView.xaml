@@ -106,12 +106,18 @@
     </UserControl.Resources>
 
     <Grid>
+        <!-- The inner Grid enforces the UniformGridLayout's minimum item size
+             even when the window is squeezed below it. Without this, the
+             ItemsRepeater is measured at a near-zero width during a resize,
+             which can take down the whole XAML layout engine (the reported
+             "resize to small size -> app exits" crash). -->
         <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <ItemsRepeater
-                x:Name="Repeater"
-                ItemsSource="{x:Bind Items, Mode=OneWay}"
-                ItemTemplate="{StaticResource StationCardTemplate}"
-                HorizontalAlignment="Stretch">
+            <Grid MinWidth="300" MinHeight="108">
+                <ItemsRepeater
+                    x:Name="Repeater"
+                    ItemsSource="{x:Bind Items, Mode=OneWay}"
+                    ItemTemplate="{StaticResource StationCardTemplate}"
+                    HorizontalAlignment="Stretch">
                 <ItemsRepeater.Layout>
                     <UniformGridLayout
                         MinItemWidth="300"
@@ -120,6 +126,7 @@
                         ItemsJustification="Start" />
                 </ItemsRepeater.Layout>
             </ItemsRepeater>
+            </Grid>
         </ScrollViewer>
 
         <!-- Empty state -->
