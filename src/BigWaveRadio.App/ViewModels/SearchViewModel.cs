@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using BigWaveRadio.App.Services;
 using BigWaveRadio.Core.Models;
 
 namespace BigWaveRadio.App.ViewModels;
@@ -25,6 +26,13 @@ public partial class SearchViewModel : ObservableObject
         HasSearched = false;
     }
 
+    /// <summary>Re-run the last search (used when the bitrate filter changes).</summary>
+    public void Reload()
+    {
+        if (!string.IsNullOrWhiteSpace(LastQuery))
+            _ = SearchAsync(LastQuery);
+    }
+
     public ObservableCollection<StationItem> Stations { get; } = new();
 
     public async Task SearchAsync(string query)
@@ -37,7 +45,9 @@ public partial class SearchViewModel : ObservableObject
         HasSearched = true;
         try
         {
-            var stations = await App.Client.SearchStationsAsync(query);
+            var stations = (await App.Client.SearchStationsAsync(query, minBitrate: FilterService.MinBitrate))
+                .Where(FilterService.Matches)
+                .ToList();
             Stations.Clear();
             foreach (var s in stations)
                 Stations.Add(new StationItem(s));

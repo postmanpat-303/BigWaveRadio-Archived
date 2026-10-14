@@ -1,3 +1,4 @@
+using BigWaveRadio.App.Services;
 using BigWaveRadio.App.ViewModels;
 using BigWaveRadio.Core.Models;
 using Microsoft.UI.Xaml;
@@ -21,7 +22,7 @@ public partial class CountriesPage : Page
         {
             Frame.Navigate(typeof(StationsPage), new StationsPageArgs(
                 country.Name,
-                () => App.Client.GetStationsByCountryAsync(country.Name)));
+                () => App.Client.GetStationsByCountryAsync(country.Name, minBitrate: FilterService.MinBitrate)));
         }
     }
 }

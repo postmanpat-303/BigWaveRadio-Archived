@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using BigWaveRadio.App.Services;
 using BigWaveRadio.Core.Models;
 
 namespace BigWaveRadio.App.ViewModels;
@@ -20,10 +21,13 @@ public partial class LibraryViewModel : ObservableObject
         Refresh();
     }
 
+    /// <summary>Re-apply the bitrate filter (invoked when the filter changes).</summary>
+    public void Reload() => Refresh();
+
     private void Refresh()
     {
         Stations.Clear();
-        foreach (var station in App.Library.Stations)
+        foreach (var station in App.Library.Stations.Where(FilterService.Matches))
             Stations.Add(new StationItem(station));
         HasStations = Stations.Count > 0;
     }

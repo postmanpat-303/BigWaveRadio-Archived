@@ -1,3 +1,4 @@
+using BigWaveRadio.App.Services;
 using BigWaveRadio.App.ViewModels;
 using BigWaveRadio.Core.Models;
 using Microsoft.UI.Xaml;
@@ -21,7 +22,7 @@ public partial class TagsPage : Page
         {
             Frame.Navigate(typeof(StationsPage), new StationsPageArgs(
                 $"#{tag.Name}",
-                () => App.Client.GetStationsByTagAsync(tag.Name)));
+                () => App.Client.GetStationsByTagAsync(tag.Name, minBitrate: FilterService.MinBitrate)));
         }
     }
 }

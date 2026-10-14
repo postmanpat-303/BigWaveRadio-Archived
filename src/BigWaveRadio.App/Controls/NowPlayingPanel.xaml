@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="BigWaveRadio.App.Controls.NowPlayingPanel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:BigWaveRadio.App.Converters">
+
+    <UserControl.Resources>
+        <converters:NullToVisibilityConverter x:Key="NullToVisibility" />
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Padding="16,12,8,8">
+            <TextBlock
+                Text="NOW PLAYING"
+                Style="{ThemeResource CaptionTextBlockStyle}"
+                FontWeight="SemiBold"
+                Opacity="0.6"
+                VerticalAlignment="Center" />
+            <Button
+                HorizontalAlignment="Right"
+                Click="Close_Click"
+                ToolTipService.ToolTip="Hide panel"
+                Background="Transparent"
+                BorderThickness="0"
+                MinWidth="36"
+                MinHeight="36"
+                Padding="0">
+                <SymbolIcon Symbol="Cancel" />
+            </Button>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" Padding="16,4,16,16">
+            <StackPanel Spacing="10">
+                <Image
+                    x:Name="PanelFavicon"
+                    Width="96"
+                    Height="96"
+                    HorizontalAlignment="Left"
+                    Stretch="UniformToFill"
+                    Source="Assets/bigwave-logo-src.png" />
+                <TextBlock
+                    Text="{Binding CurrentStation.Name, FallbackValue=''}"
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    FontWeight="SemiBold"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Text="{Binding CurrentStation.MetaLine, FallbackValue=''}"
+                    Style="{ThemeResource CaptionTextBlockStyle}"
+                    Opacity="0.7"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Text="{Binding CurrentStation.QualityLine, FallbackValue=''}"
+                    Style="{ThemeResource CaptionTextBlockStyle}"
+                    Opacity="0.7"
+                    TextWrapping="Wrap" />
+                <StackPanel Spacing="2" Visibility="{Binding CurrentStation.Tags, Converter={StaticResource NullToVisibility}, FallbackValue=Collapsed}">
+                    <TextBlock
+                        Text="TAGS"
+                        Style="{ThemeResource CaptionTextBlockStyle}"
+                        FontWeight="SemiBold"
+                        Opacity="0.6" />
+                    <TextBlock
+                        Text="{Binding CurrentStation.Tags, FallbackValue=''}"
+                        Style="{ThemeResource CaptionTextBlockStyle}"
+                        Opacity="0.7"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Spacing="2" Visibility="{Binding CurrentStation.PopularityLine, Converter={StaticResource NullToVisibility}, FallbackValue=Collapsed}">
+                    <TextBlock
+                        Text="POPULARITY"
+                        Style="{ThemeResource CaptionTextBlockStyle}"
+                        FontWeight="SemiBold"
+                        Opacity="0.6" />
+                    <TextBlock
+                        Text="{Binding CurrentStation.PopularityLine, FallbackValue=''}"
+                        Style="{ThemeResource CaptionTextBlockStyle}"
+                        Opacity="0.7" />
+                </StackPanel>
+                <HyperlinkButton
+                    x:Name="HomepageLink"
+                    Content="Visit station website"
+                    Visibility="Collapsed" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

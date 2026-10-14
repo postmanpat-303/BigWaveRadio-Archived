@@ -1,10 +1,11 @@
 using BigWaveRadio.App.Controls;
+using BigWaveRadio.App.Services;
 using BigWaveRadio.App.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 
 namespace BigWaveRadio.App.Pages;
 
-public partial class SearchPage : Page
+public partial class SearchPage : Page, IBitrateFilterable
 {
     public SearchViewModel VM { get; } = new();
 
@@ -12,6 +13,8 @@ public partial class SearchPage : Page
     {
         InitializeComponent();
     }
+
+    public void ReloadForBitrateFilter() => VM.Reload();
 
     private void QueryBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {

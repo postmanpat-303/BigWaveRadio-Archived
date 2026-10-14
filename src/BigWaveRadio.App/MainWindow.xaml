@@ -4,10 +4,15 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:BigWaveRadio.App.Controls"
+    xmlns:converters="using:BigWaveRadio.App.Converters"
     xmlns:pages="using:BigWaveRadio.App.Pages"
     Title="BigWave Radio">
 
     <Grid>
+        <Grid.Resources>
+            <converters:NullToVisibilityConverter x:Key="NullToVisibility" />
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="48" />
             <RowDefinition Height="*" />
@@ -21,28 +26,83 @@
                 <TextBlock Text="BigWave Radio" VerticalAlignment="Center"
                            Style="{ThemeResource CaptionTextBlockStyle}" FontWeight="SemiBold" />
             </StackPanel>
+            <!-- Info-panel toggle (kept clear of the system caption buttons) -->
+            <ToggleButton
+                x:Name="InfoToggle"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Margin="0,0,150,0"
+                MinWidth="40"
+                IsChecked="True"
+                Click="InfoToggle_Click"
+                ToolTipService.ToolTip="Show / hide the station info panel">
+                <SymbolIcon Symbol="ContactInfo" />
+            </ToggleButton>
         </Grid>
 
-        <NavigationView
-            x:Name="NavView"
-            Grid.Row="1"
-            PaneDisplayMode="Auto"
-            OpenPaneLength="264"
-            IsBackEnabled="True"
-            BackRequested="NavView_BackRequested"
-            SelectionChanged="NavView_SelectionChanged">
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="0" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
-            <NavigationView.MenuItems>
-                <NavigationViewItem x:Name="DiscoverItem" Content="Discover" Tag="discover" Icon="Home" />
-                <NavigationViewItem Content="Search" Tag="search" Icon="Find" />
-                <NavigationViewItem Content="My Library" Tag="library" Icon="Favorite" />
-                <NavigationViewItemSeparator />
-                <NavigationViewItem Content="Tags" Tag="tags" Icon="List" />
-                <NavigationViewItem Content="Countries" Tag="countries" Icon="Map" />
-            </NavigationView.MenuItems>
+            <NavigationView
+                x:Name="NavView"
+                Grid.Column="0"
+                PaneDisplayMode="Auto"
+                OpenPaneLength="264"
+                IsBackEnabled="True"
+                BackRequested="NavView_BackRequested"
+                SelectionChanged="NavView_SelectionChanged">
 
-            <Frame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" />
-        </NavigationView>
+                <NavigationView.MenuItems>
+                    <NavigationViewItem x:Name="DiscoverItem" Content="Discover" Tag="discover" Icon="Home" />
+                    <NavigationViewItem Content="Search" Tag="search" Icon="Find" />
+                    <NavigationViewItem Content="My Library" Tag="library" Icon="Favorite" />
+                    <NavigationViewItemSeparator />
+                    <NavigationViewItem Content="Tags" Tag="tags" Icon="List" />
+                    <NavigationViewItem Content="Countries" Tag="countries" Icon="Map" />
+                </NavigationView.MenuItems>
+
+                <NavigationView.PaneFooter>
+                    <!-- Only usable (and readable) while the pane is expanded. -->
+                    <StackPanel
+                        Margin="16,4,16,12"
+                        Spacing="4"
+                        Visibility="{Binding IsPaneOpen, ElementName=NavView, Converter={StaticResource BoolToVisibility}}">
+                        <TextBlock
+                            Text="MINIMUM BITRATE"
+                            Style="{ThemeResource CaptionTextBlockStyle}"
+                            Opacity="0.6" />
+                        <ComboBox
+                            x:Name="BitrateFilterCombo"
+                            HorizontalAlignment="Stretch"
+                            SelectionChanged="BitrateFilter_SelectionChanged">
+                            <ComboBoxItem Tag="0" Content="Any bitrate" />
+                            <ComboBoxItem Tag="64" Content="64 kbps or more" />
+                            <ComboBoxItem Tag="128" Content="128 kbps or more" />
+                            <ComboBoxItem Tag="192" Content="192 kbps or more" />
+                            <ComboBoxItem Tag="256" Content="256 kbps or more" />
+                            <ComboBoxItem Tag="320" Content="320 kbps or more" />
+                        </ComboBox>
+                    </StackPanel>
+                </NavigationView.PaneFooter>
+
+                <Frame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" />
+            </NavigationView>
+
+            <!-- Now-playing station info panel (right side) -->
+            <Border
+                x:Name="InfoPanel"
+                Grid.Column="1"
+                Width="300"
+                Visibility="Collapsed"
+                Background="{ThemeResource LayerFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1,0,0,0">
+                <controls:NowPlayingPanel CloseRequested="InfoPanel_CloseRequested" />
+            </Border>
+        </Grid>
 
         <!-- Now-playing bar pinned to the bottom -->
         <controls:NowPlayingBar Grid.Row="2" />

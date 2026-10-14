@@ -43,6 +43,7 @@ public partial class PlayerViewModel : ObservableObject
     public bool HasStation => CurrentStation is not null;
 
     private readonly DispatcherQueueTimer? _sleepTimer;
+    private readonly DispatcherQueue? _dispatcher;
     private TimeSpan _sleepRemaining;
 
     private PlayerViewModel()
@@ -50,7 +51,10 @@ public partial class PlayerViewModel : ObservableObject
         Player.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
         Player.MediaFailed += OnMediaFailed;
         Player.Volume = Volume;
-        _sleepTimer = DispatcherQueue.GetForCurrentThread()?.CreateTimer();
+        // MediaPlayer events arrive on a worker thread; state must be applied
+        // on the UI thread or the now-playing bar never updates.
+        _dispatcher = DispatcherQueue.GetForCurrentThread();
+        _sleepTimer = _dispatcher?.CreateTimer();
         if (_sleepTimer is not null)
         {
             _sleepTimer.Interval = TimeSpan.FromSeconds(1);
@@ -157,25 +161,38 @@ public partial class PlayerViewModel : ObservableObject
         Player.Volume = Math.Clamp(value, 0.0, 1.0);
     }
 
+    /// <summary>MediaPlayer callbacks arrive off-UI; re-raise the state there so bindings refresh.</summary>
+    private void OnUiThread(Action action)
+    {
+        if (_dispatcher is null || _dispatcher.HasThreadAccess) action();
+        else _dispatcher.TryEnqueue(() => action());
+    }
+
     private void OnPlaybackStateChanged(MediaPlaybackSession sender, object args)
     {
-        IsPlaying = sender.PlaybackState is MediaPlaybackState.Playing
-            or MediaPlaybackState.Buffering
-            or MediaPlaybackState.Opening;
-        Status = sender.PlaybackState switch
+        OnUiThread(() =>
         {
-            MediaPlaybackState.Playing => "Playing",
-            MediaPlaybackState.Buffering => "Buffering…",
-            MediaPlaybackState.Opening => "Connecting…",
-            MediaPlaybackState.Paused => "Paused",
-            _ => HasStation ? "Stopped" : "Ready",
-        };
+            IsPlaying = sender.PlaybackState is MediaPlaybackState.Playing
+                or MediaPlaybackState.Buffering
+                or MediaPlaybackState.Opening;
+            Status = sender.PlaybackState switch
+            {
+                MediaPlaybackState.Playing => "Connected",
+                MediaPlaybackState.Buffering => "Buffering…",
+                MediaPlaybackState.Opening => "Connecting…",
+                MediaPlaybackState.Paused => "Paused",
+                _ => HasStation ? "Stopped" : "Ready",
+            };
+        });
     }
 
     private void OnMediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
     {
-        IsPlaying = false;
-        var detail = args.ExtendedErrorCode is { } ex ? $" ({ex.HResult:X8}: {ex.Message})" : "";
-        Status = $"Playback error: {args.Error} {args.ErrorMessage}{detail}".Trim();
+        OnUiThread(() =>
+        {
+            IsPlaying = false;
+            var detail = args.ExtendedErrorCode is { } ex ? $" ({ex.HResult:X8}: {ex.Message})" : "";
+            Status = $"Playback error: {args.Error} {args.ErrorMessage}{detail}".Trim();
+        });
     }
 }

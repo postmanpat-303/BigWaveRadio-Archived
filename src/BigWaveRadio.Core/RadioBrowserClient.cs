@@ -102,14 +102,17 @@ public class RadioBrowserClient
     public Task<IReadOnlyList<Station>> GetRecentlyChangedAsync(int count = 60, CancellationToken ct = default)
         => GetListAsync($"/json/stations/lastchange/{count}", ct);
 
-    public Task<IReadOnlyList<Station>> SearchStationsAsync(string query, int limit = 100, CancellationToken ct = default)
-        => GetListAsync($"/json/stations/search?name={Uri.EscapeDataString(query)}&limit={limit}&hidebroken=true", ct);
+    public Task<IReadOnlyList<Station>> SearchStationsAsync(string query, int limit = 100, int minBitrate = 0, CancellationToken ct = default)
+        => GetListAsync($"/json/stations/search?name={Uri.EscapeDataString(query)}&limit={limit}&hidebroken=true{BitrateClause(minBitrate)}", ct);
 
-    public Task<IReadOnlyList<Station>> GetStationsByTagAsync(string tag, int limit = 100, CancellationToken ct = default)
-        => GetListAsync($"/json/stations/bytag/{Uri.EscapeDataString(tag)}?limit={limit}&hidebroken=true&order=votes&reverse=true", ct);
+    public Task<IReadOnlyList<Station>> GetStationsByTagAsync(string tag, int limit = 100, int minBitrate = 0, CancellationToken ct = default)
+        => GetListAsync($"/json/stations/bytag/{Uri.EscapeDataString(tag)}?limit={limit}&hidebroken=true&order=votes&reverse=true{BitrateClause(minBitrate)}", ct);
 
-    public Task<IReadOnlyList<Station>> GetStationsByCountryAsync(string country, int limit = 100, CancellationToken ct = default)
-        => GetListAsync($"/json/stations/bycountryexact/{Uri.EscapeDataString(country)}?limit={limit}&hidebroken=true&order=votes&reverse=true", ct);
+    public Task<IReadOnlyList<Station>> GetStationsByCountryAsync(string country, int limit = 100, int minBitrate = 0, CancellationToken ct = default)
+        => GetListAsync($"/json/stations/bycountryexact/{Uri.EscapeDataString(country)}?limit={limit}&hidebroken=true&order=votes&reverse=true{BitrateClause(minBitrate)}", ct);
+
+    /// <summary>radio-browser supports server-side minimum-bitrate filtering on search endpoints.</summary>
+    private static string BitrateClause(int minBitrate) => minBitrate > 0 ? $"&bitrateMin={minBitrate}" : string.Empty;
 
     public Task<IReadOnlyList<RadioTag>> GetTagsAsync(int limit = 200, CancellationToken ct = default)
         => GetListAsync<RadioTag>($"/json/tags?order=stationcount&reverse=true&hidebroken=true&limit={limit}", ct);

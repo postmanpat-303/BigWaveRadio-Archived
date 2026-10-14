@@ -1,4 +1,5 @@
 using BigWaveRadio.App.Controls;
+using BigWaveRadio.App.Services;
 using BigWaveRadio.App.ViewModels;
 using BigWaveRadio.Core.Models;
 using Microsoft.UI.Xaml;
@@ -7,7 +8,7 @@ using Microsoft.UI.Xaml.Navigation;
 
 namespace BigWaveRadio.App.Pages;
 
-public partial class DiscoverPage : Page
+public partial class DiscoverPage : Page, IBitrateFilterable
 {
     public DiscoverViewModel VM { get; } = new();
 
@@ -16,6 +17,8 @@ public partial class DiscoverPage : Page
         InitializeComponent();
         ModeSelector.ItemsSource = VM.Modes;
     }
+
+    public void ReloadForBitrateFilter() => VM.Reload();
 
     private void StationGrid_PlayRequested(StationGridView sender, StationItem item)
     {
@@ -28,7 +31,7 @@ public partial class DiscoverPage : Page
         {
             Frame.Navigate(typeof(StationsPage), new StationsPageArgs(
                 $"#{tag.Name}",
-                () => App.Client.GetStationsByTagAsync(tag.Name)));
+                () => App.Client.GetStationsByTagAsync(tag.Name, minBitrate: FilterService.MinBitrate)));
         }
     }
 }

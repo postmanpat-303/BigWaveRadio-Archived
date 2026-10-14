@@ -12,6 +12,8 @@ namespace BigWaveRadio.App;
 
 public partial class MainWindow : Window
 {
+    private bool _panelOpen = true;
+
     public MainWindow()
     {
         InitializeComponent();
@@ -44,11 +46,64 @@ public partial class MainWindow : Window
         // is no light-to-dark flash on launch.
         ThemeService.Attach((FrameworkElement)Content, AppWindow);
 
+        // Restore the saved bitrate filter without re-triggering a reload.
+        foreach (var item in BitrateFilterCombo.Items.OfType<ComboBoxItem>())
+        {
+            if (item.Tag is string tag && int.TryParse(tag, out var value) && value == FilterService.MinBitrate)
+            {
+                BitrateFilterCombo.SelectedItem = item;
+                break;
+            }
+        }
+
+        // Keep the info panel in step with the player state.
+        PlayerViewModel.Instance.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName is nameof(PlayerViewModel.HasStation) or nameof(PlayerViewModel.CurrentStation))
+                UpdatePanelVisibility();
+        };
+        UpdatePanelVisibility();
+
         // Select the default page AFTER the tree is built. Setting
         // IsSelected in XAML would fire SelectionChanged mid-parse, before
         // ContentFrame exists, and crash the XAML parser.
         NavView.SelectedItem = DiscoverItem;
     }
+
+    // ---- Bitrate filter (nav pane) -----------------------------------------
+
+    private void BitrateFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (BitrateFilterCombo.SelectedItem is not ComboBoxItem { Tag: string tag }) return;
+        if (!int.TryParse(tag, out var min)) return;
+        FilterService.SetMinBitrate(min);
+        if (ContentFrame.Content is IBitrateFilterable page)
+            page.ReloadForBitrateFilter();
+    }
+
+    // ---- Now-playing info panel ---------------------------------------------
+
+    private void UpdatePanelVisibility()
+    {
+        InfoPanel.Visibility = PlayerViewModel.Instance.HasStation && _panelOpen
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+    }
+
+    private void InfoToggle_Click(object sender, RoutedEventArgs e)
+    {
+        _panelOpen = InfoToggle.IsChecked == true;
+        UpdatePanelVisibility();
+    }
+
+    private void InfoPanel_CloseRequested(object sender, RoutedEventArgs e)
+    {
+        _panelOpen = false;
+        InfoToggle.IsChecked = false;
+        UpdatePanelVisibility();
+    }
+
+    // ---- Navigation -----------------------------------------------------------
 
     private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
     {

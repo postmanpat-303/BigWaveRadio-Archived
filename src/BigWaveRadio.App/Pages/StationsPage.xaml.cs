@@ -1,4 +1,5 @@
 using BigWaveRadio.App.Controls;
+using BigWaveRadio.App.Services;
 using BigWaveRadio.App.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -9,7 +10,7 @@ namespace BigWaveRadio.App.Pages;
 /// Generic station list used for "stations by tag" and "stations by country".
 /// Receives a <see cref="StationsPageArgs"/> through navigation.
 /// </summary>
-public partial class StationsPage : Page
+public partial class StationsPage : Page, IBitrateFilterable
 {
     public StationsViewModel VM { get; } = new();
 
@@ -17,6 +18,8 @@ public partial class StationsPage : Page
     {
         InitializeComponent();
     }
+
+    public void ReloadForBitrateFilter() => VM.Reload();
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {

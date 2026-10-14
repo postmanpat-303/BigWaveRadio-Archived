@@ -43,6 +43,7 @@ public partial class App : Application
     protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
         await ThemeService.LoadAsync();
+        await FilterService.LoadAsync();
         _window = new MainWindow();
         _window.Activate();
         await Library.LoadAsync();

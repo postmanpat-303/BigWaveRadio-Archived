@@ -22,12 +22,24 @@ public partial class StationsViewModel : ObservableObject
 
     public ObservableCollection<StationItem> Stations { get; } = new();
 
+    private Func<Task<IReadOnlyList<Station>>>? _loader;
+
+    /// <summary>Re-run the stored loader (used when the bitrate filter changes).</summary>
+    public void Reload()
+    {
+        if (_loader is { } loader)
+            _ = LoadAsync(loader);
+    }
+
     public async Task LoadAsync(Func<Task<IReadOnlyList<Station>>> loader)
     {
+        _loader = loader;
         IsLoading = true;
         try
         {
-            var stations = await loader();
+            var stations = (await loader())
+                .Where(Services.FilterService.Matches)
+                .ToList();
             Stations.Clear();
             foreach (var s in stations)
                 Stations.Add(new StationItem(s));

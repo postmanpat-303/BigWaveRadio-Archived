@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using BigWaveRadio.App.Services;
 using BigWaveRadio.Core.Models;
 
 namespace BigWaveRadio.App.ViewModels;
@@ -33,17 +34,23 @@ public partial class DiscoverViewModel : ObservableObject
 
     partial void OnSelectedModeChanged(string value) => _ = LoadAsync();
 
+    public void Reload() => _ = LoadAsync();
+
     public async Task LoadAsync()
     {
         IsLoading = true;
         try
         {
-            var stations = SelectedMode switch
+            // Fetch extra so the bitrate filter still leaves a useful list.
+            var stations = (SelectedMode switch
             {
-                "Popular" => await App.Client.GetTopClickedAsync(60),
-                "Recently added" => await App.Client.GetRecentlyChangedAsync(60),
-                _ => await App.Client.GetTopVotedAsync(60),
-            };
+                "Popular" => await App.Client.GetTopClickedAsync(300),
+                "Recently added" => await App.Client.GetRecentlyChangedAsync(300),
+                _ => await App.Client.GetTopVotedAsync(300),
+            })
+                .Where(FilterService.Matches)
+                .Take(60)
+                .ToList();
             Stations.Clear();
             foreach (var s in stations)
                 Stations.Add(new StationItem(s));

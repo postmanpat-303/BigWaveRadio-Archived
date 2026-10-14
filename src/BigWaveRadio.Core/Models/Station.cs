@@ -58,4 +58,13 @@ public class Station
             Bitrate > 0 ? $"{Bitrate} kbps" : "",
             Votes > 0 ? $"{Votes} votes" : "",
         }.Where(s => !string.IsNullOrWhiteSpace(s)));
+
+    /// <summary>"12,345 votes · 67,890 clicks" popularity line for the info panel.</summary>
+    [JsonIgnore]
+    public string PopularityLine =>
+        string.Join(" · ", new[]
+        {
+            Votes > 0 ? $"{Votes:N0} votes" : "",
+            ClickCount > 0 ? $"{ClickCount:N0} clicks" : "",
+        }.Where(s => !string.IsNullOrWhiteSpace(s)));
 }
